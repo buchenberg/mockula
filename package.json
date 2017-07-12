@@ -1,0 +1,38 @@
+{
+  "name": "mockula",
+  "version": "0.1.0",
+  "private": true,
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buchenberg/mockula.git"
+  },
+  "author": "Gregory Buchenberger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/buchenberg/mockula/issues"
+  },
+  "homepage": "https://github.com/buchenberg/mockula#readme",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "async": "^2.5.0",
+    "es6-promise": "^4.1.1",
+    "fetch": "^1.1.0",
+    "isomorphic-fetch": "^2.2.1",
+    "liform-react": "^0.6.3",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "react-scripts": "1.0.10",
+    "redux": "^3.7.1",
+    "redux-form": "^6.8.0",
+    "swagger-parser": "^3.4.1"
+  },
+  "devDependencies": {}
+}
