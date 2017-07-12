@@ -16,7 +16,7 @@ const reducer = combineReducers({
     form: formReducer
 })
 
-var requestURL = 'http://localhost:9999/api/pub/swagger';
+var requestURL = 'http://petstore.swagger.io/v2/swagger.json';
 
 var request = new Request(requestURL, {});
 
@@ -58,14 +58,14 @@ const getSwagger = function () {
                         var path = result.paths[pathKey]
                         var opIdx = 0;
                         forms.push(
-                            <h2>{pathKey}</h2>
+                            <h3>{pathKey}</h3>
                         )
                         Object.keys(path).forEach(function (opKey) {
                             opIdx++;
                             var responses = path[opKey].responses
                             var respIdx = 0;
                             forms.push(
-                                <h3>{opKey}</h3>
+                                <h4>{opKey}</h4>
                             )
                             Object.keys(responses).forEach(function (responseKey) {
                                 respIdx++;
