@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import UrlForm from './urlForm';
+import UrlForm from './components/urlForm';
 import registerServiceWorker from './registerServiceWorker';
 import { createStore, combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
