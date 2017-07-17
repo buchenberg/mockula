@@ -125,8 +125,7 @@ export default class Body extends React.Component {
             null,
             2
         )
-        window.open(swaggerDownload);
-        // FileDownload(swaggerDownload, 'swagger.json')
+        FileDownload(swaggerDownload, 'swagger.json')
     }
 
     handleSubmit(event) {
