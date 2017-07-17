@@ -15,9 +15,6 @@ const UrlForm = props => {
                     placeholder="Swagger URL"
                 />
             </div>
-            {/* <div className="form-group">
-                <input type="text" className="form-control" placeholder="Swagger URL"></input>
-            </div> */}
             <button type="submit" className="btn btn-default">Load</button>
         </form>
     );
