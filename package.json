@@ -19,7 +19,7 @@
     "clean": "rm -rf ./build ./docs",
     "build": "react-scripts build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d docs",
     "publish": "npm run clean && npm run build && cp -r ./build ./docs",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
