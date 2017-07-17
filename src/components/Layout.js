@@ -13,9 +13,7 @@ export default class Layout extends React.Component {
                 <div className="container-fluid text-center">
                     <div className="row content">
                         <div className="col-md-12 text-left">
-                            <p>
                                 <Body />
-                            </p>
                         </div>
                     </div>
                     <Footer />

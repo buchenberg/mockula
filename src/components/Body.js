@@ -2,10 +2,10 @@ import React from "react";
 import { createStore, combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 import { Provider } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
 import Liform from 'liform-react';
 import "isomorphic-fetch";
 import * as SwaggerParser from 'swagger-parser/dist/swagger-parser';
+import * as FileDownload from 'react-file-download';
 
 const reducer = combineReducers({
     form: formReducer
@@ -17,29 +17,33 @@ const showResults = values => {
     window.alert(`You submitted:\n\n${JSON.stringify(values, null, 2)}`)
 }
 
-
 export default class Body extends React.Component {
 
     constructor(props) {
         super(props);
+        this.cachedSwagger = localStorage.getItem('swagger');
+        this.cachedSwaggerUrl = localStorage.getItem('swaggerUrl');
         this.loadForms = this.loadForms.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.fileDownload = this.fileDownload.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {
-            title: 'Uber API',
             requestURL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/uber.json',
+            loadable: true,
+            downloadable: false,
             forms: null
         };
     }
 
     componentDidMount() {
         const self = this;
-        this.loadForms(this.state.requestURL);
+        // this.loadForms(this.state.requestURL);
     };
 
     loadForms(requestURL) {
         const self = this;
         const request = new Request(requestURL, {});
+        localStorage.setItem('swaggerUrl', requestURL);
         fetch(request)
             .then(function (response) {
                 return response.json();
@@ -49,6 +53,7 @@ export default class Body extends React.Component {
                     .then(function (result) {
                         var forms = [];
                         var pathIdx = 0;
+                        localStorage.setItem('swagger', JSON.stringify(result));
                         Object.keys(result.paths).forEach(function (pathKey) {
                             pathIdx++;
                             var path = result.paths[pathKey]
@@ -96,6 +101,8 @@ export default class Body extends React.Component {
                             });
                         });
                         self.setState({
+                            downloadable: true,
+                            loadable: false,
                             forms: forms
                         });;
                     });
@@ -103,30 +110,49 @@ export default class Body extends React.Component {
     };
 
     handleChange(event) {
-        this.setState({ requestURL: event.target.value });
+        this.setState({
+            loadable: true,
+            downloadable: false,
+            requestURL: event.target.value
+        });
+    }
+
+    fileDownload(event) {
+        const swaggerDownload = JSON.stringify(
+            JSON.parse(
+                localStorage.getItem('swagger')
+            ),
+            null,
+            2
+        )
+        window.open(swaggerDownload);
+        // FileDownload(swaggerDownload, 'swagger.json')
     }
 
     handleSubmit(event) {
-        // alert('A new URL was submitted: ' + this.state.requestURL);
+        const cachedSwgger = localStorage.getItem('swagger');
         this.loadForms(this.state.requestURL);
         event.preventDefault();
     }
 
-
     render() {
         return (
-            <div>
+            <div className="col-lg-10">
+                <div className="input-group">
+                    <input type="text" className="form-control" id="swaggerUrl" ref="swaggerUrl" value={this.state.requestURL} onChange={this.handleChange} placeholder="Swagger URL" />
+                    <div className="input-group-btn">
+                        <button className={
+                            this.state.loadable ? 'btn btn-success active' : 'btn btn-danger disabled'
+                        } type="button" onClick={this.handleSubmit}>Load</button>
+                        <button className={
+                            this.state.downloadable ? 'btn btn-success active' : 'btn btn-danger disabled'
+                        } type="button" onClick={this.fileDownload}><span className="glyphicon glyphicon-download" /> Download Swagger</button>
+                    </div>
+                </div>
+
                 {
                     this.state && this.state.forms &&
                     <div>
-                        <h1>{this.state.title}</h1>
-                        <form onSubmit={this.handleSubmit} >
-                            <div className="form-group">
-                                <label for="swaggerUrl">Swagger URL</label>
-                                <input type="text" className="form-control" id="swaggerUrl" ref="swaggerUrl" placeholder="Swagger URL" value={this.state.requestURL} onChange={this.handleChange} />
-                            </div>
-                            <button type="submit" className="btn btn-success">Load</button>
-                        </form >
                         {this.state.forms}
                     </div>
                 }
