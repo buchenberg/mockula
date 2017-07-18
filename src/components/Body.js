@@ -54,9 +54,20 @@ export default class Body extends React.Component {
             .then(function (json) {
                 SwaggerParser.dereference(json)
                     .then(function (result) {
-                        var forms = [];
+                        var forms = [
+                            
+                        ];
+                        self.setState({
+                            downloadable: true
+                        });
+                        
                         forms.push(
                             <h1>{result.info.title}</h1>
+                        )
+                        forms.push(
+                            <button className={
+                            self.state.downloadable ? 'btn btn-default pull-right' : 'fade hidden'
+                        } type="button" onClick={self.handleFileDownload}><span className="glyphicon glyphicon-download" /> Download Swagger</button>
                         )
                         var pathIdx = 0;
                         self.state.swagger = result;
@@ -87,8 +98,8 @@ export default class Body extends React.Component {
                                         var panelKey = `panel-${key}`
                                         forms.push(
                                             <div>
-                                                <div className="panel panel-default" id={panelKey}>
-                                                    <div className="panel-heading" role="tab" id={headingKey}>
+                                                <div className="panel panel-default" key={panelKey}>
+                                                    <div className="panel-heading" role="tab" key={headingKey}>
                                                         <h4 className="panel-title">
                                                             {responseKey}
                                                             <a className="pull-right" role="button" data-toggle="collapse" data-parent={'#' + panelKey} href={'#collapse-' + panelKey} aria-expanded="true" aria-controls={'collapse-' + panelKey}>
@@ -96,9 +107,8 @@ export default class Body extends React.Component {
                                                             </a>
                                                         </h4>
                                                     </div>
-                                                    <div id={'collapse-' + panelKey} className="panel-collapse collapse" role="tabpanel" aria-labelledby={headingKey}>
-                                                        <div className="panel-body">
-                                                            <h5 id="jsonPath">{jsonPath}</h5>
+                                                    <div key={'collapse-' + panelKey} className="panel-collapse collapse" role="tabpanel" aria-labelledby={headingKey}>
+                                                        <div className="panel-body">  
                                                             <Provider store={store} key={'provider-' + key}>
                                                                 <Liform schema={response.schema} onSubmit={self.handleSubmit} formKey={jsonPath} />
                                                             </Provider>
@@ -112,10 +122,9 @@ export default class Body extends React.Component {
                             });
                         });
                         self.setState({
-                            downloadable: true,
                             loadable: false,
                             forms: forms
-                        });;
+                        });
                     });
             });
     };
@@ -147,18 +156,15 @@ export default class Body extends React.Component {
     render() {
         return (
             <div className="col-lg-10">
+                <button className="btn btn-default" type="button" data-toggle="modal" data-target="#myModal">Launch modal</button>
                 <div className="input-group">
                     <input type="text" className="form-control" id="swaggerUrl" ref="swaggerUrl" value={this.state.requestURL} onChange={this.handleChange} placeholder="Swagger URL" />
                     <div className="input-group-btn">
-                        <button className={
-                            this.state.loadable ? 'btn btn-default' : 'fade hidden'
-                        } type="button" onClick={this.handleLoadSwagger}><span className="glyphicon glyphicon-upload" /> Load Swagger</button>
-                        <button className={
-                            this.state.downloadable ? 'btn btn-default' : 'fade hidden'
-                        } type="button" onClick={this.handleFileDownload}><span className="glyphicon glyphicon-download" /> Download Swagger</button>
+                        <button className="btn btn-default" type="button" onClick={this.handleLoadSwagger}><span className="glyphicon glyphicon-upload" />{
+                            this.state.loadable ? ' Load Swagger' : ' Reload Swagger'
+                        }</button>
                     </div>
                 </div>
-
                 {
                     this.state && this.state.forms &&
                     <div>
