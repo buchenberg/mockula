@@ -13,10 +13,6 @@ const reducer = combineReducers({
 
 const store = (window.devToolsExtension ? window.devToolsExtension()(createStore) : createStore)(reducer)
 
-const showResults = values => {
-    window.alert(`You submitted:\n\n${JSON.stringify(values, null, 2)}`)
-}
-
 export default class Body extends React.Component {
 
     constructor(props) {
@@ -25,10 +21,12 @@ export default class Body extends React.Component {
         this.cachedSwaggerUrl = localStorage.getItem('swaggerUrl');
         this.loadForms = this.loadForms.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.fileDownload = this.fileDownload.bind(this);
+        this.handleFileDownload = this.handleFileDownload.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleLoadSwagger = this.handleLoadSwagger.bind(this);
         this.state = {
             requestURL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/uber.json',
+            swagger: {},
             loadable: true,
             downloadable: false,
             forms: null
@@ -37,8 +35,13 @@ export default class Body extends React.Component {
 
     componentDidMount() {
         const self = this;
-        // this.loadForms(this.state.requestURL);
     };
+
+    handleSubmit(values, dispatch, props) {
+        var pathArray = props.formKey.split('|');
+        this.state.swagger.paths[`${pathArray[0]}`][`${pathArray[1]}`][`${pathArray[2]}`][`${pathArray[3]}`]['schema']['example'] = values;
+        localStorage.setItem('swagger', JSON.stringify(this.state.swagger, null, 2));
+    }
 
     loadForms(requestURL) {
         const self = this;
@@ -52,12 +55,17 @@ export default class Body extends React.Component {
                 SwaggerParser.dereference(json)
                     .then(function (result) {
                         var forms = [];
+                        forms.push(
+                            <h1>{result.info.title}</h1>
+                        )
                         var pathIdx = 0;
+                        self.state.swagger = result;
                         localStorage.setItem('swagger', JSON.stringify(result));
                         Object.keys(result.paths).forEach(function (pathKey) {
                             pathIdx++;
                             var path = result.paths[pathKey]
                             var opIdx = 0;
+
                             forms.push(
                                 <h3>{pathKey}</h3>
                             )
@@ -70,8 +78,10 @@ export default class Body extends React.Component {
                                 )
                                 Object.keys(responses).forEach(function (responseKey) {
                                     respIdx++;
+                                    var jsonPath = `${pathKey}.${opKey}.${respIdx}`
                                     var key = `${pathIdx}-${opIdx}-${respIdx}`
                                     var response = responses[responseKey];
+                                    var jsonPath = `${pathKey}|${opKey}|responses|${responseKey}`
                                     if (response.schema) {
                                         var headingKey = `heading-${key}`
                                         var panelKey = `panel-${key}`
@@ -88,8 +98,9 @@ export default class Body extends React.Component {
                                                     </div>
                                                     <div id={'collapse-' + panelKey} className="panel-collapse collapse" role="tabpanel" aria-labelledby={headingKey}>
                                                         <div className="panel-body">
-                                                            <Provider store={store} id={'provider-' + key}>
-                                                                <Liform schema={response.schema} onSubmit={showResults} formKey={'form-' + key} />
+                                                            <h5 id="jsonPath">{jsonPath}</h5>
+                                                            <Provider store={store} key={'provider-' + key}>
+                                                                <Liform schema={response.schema} onSubmit={self.handleSubmit} formKey={jsonPath} />
                                                             </Provider>
                                                         </div>
                                                     </div>
@@ -117,7 +128,7 @@ export default class Body extends React.Component {
         });
     }
 
-    fileDownload(event) {
+    handleFileDownload(event) {
         const swaggerDownload = JSON.stringify(
             JSON.parse(
                 localStorage.getItem('swagger')
@@ -128,8 +139,7 @@ export default class Body extends React.Component {
         FileDownload(swaggerDownload, 'swagger.json')
     }
 
-    handleSubmit(event) {
-        const cachedSwgger = localStorage.getItem('swagger');
+    handleLoadSwagger(event) {
         this.loadForms(this.state.requestURL);
         event.preventDefault();
     }
@@ -141,11 +151,11 @@ export default class Body extends React.Component {
                     <input type="text" className="form-control" id="swaggerUrl" ref="swaggerUrl" value={this.state.requestURL} onChange={this.handleChange} placeholder="Swagger URL" />
                     <div className="input-group-btn">
                         <button className={
-                            this.state.loadable ? 'btn btn-success active' : 'btn btn-danger disabled'
-                        } type="button" onClick={this.handleSubmit}>Load</button>
+                            this.state.loadable ? 'btn btn-default' : 'fade hidden'
+                        } type="button" onClick={this.handleLoadSwagger}><span className="glyphicon glyphicon-upload" /> Load Swagger</button>
                         <button className={
-                            this.state.downloadable ? 'btn btn-success active' : 'btn btn-danger disabled'
-                        } type="button" onClick={this.fileDownload}><span className="glyphicon glyphicon-download" /> Download Swagger</button>
+                            this.state.downloadable ? 'btn btn-default' : 'fade hidden'
+                        } type="button" onClick={this.handleFileDownload}><span className="glyphicon glyphicon-download" /> Download Swagger</button>
                     </div>
                 </div>
 

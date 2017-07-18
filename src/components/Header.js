@@ -1,5 +1,4 @@
 import React from "react";
-import UrlForm from './UrlForm';
 
 
 export default class Header extends React.Component {
@@ -18,7 +17,6 @@ export default class Header extends React.Component {
                         <a className="navbar-brand" href="#">Mockula</a>
                     </div>
                     <div className="collapse navbar-collapse">
-                        {/* <UrlForm/> */}
                     </div>
                 </div>
             </nav>
