@@ -98,8 +98,8 @@ export default class Body extends React.Component {
                                         var panelKey = `panel-${key}`
                                         forms.push(
                                             <div>
-                                                <div className="panel panel-default" key={panelKey}>
-                                                    <div className="panel-heading" role="tab" key={headingKey}>
+                                                <div className="panel panel-default" id={panelKey}>
+                                                    <div className="panel-heading" role="tab" id={headingKey}>
                                                         <h4 className="panel-title">
                                                             {responseKey}
                                                             <a className="pull-right" role="button" data-toggle="collapse" data-parent={'#' + panelKey} href={'#collapse-' + panelKey} aria-expanded="true" aria-controls={'collapse-' + panelKey}>
@@ -107,7 +107,7 @@ export default class Body extends React.Component {
                                                             </a>
                                                         </h4>
                                                     </div>
-                                                    <div key={'collapse-' + panelKey} className="panel-collapse collapse" role="tabpanel" aria-labelledby={headingKey}>
+                                                    <div id={'collapse-' + panelKey} className="panel-collapse collapse" role="tabpanel" aria-labelledby={headingKey}>
                                                         <div className="panel-body">  
                                                             <Provider store={store} key={'provider-' + key}>
                                                                 <Liform schema={response.schema} onSubmit={self.handleSubmit} formKey={jsonPath} />
