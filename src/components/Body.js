@@ -156,7 +156,6 @@ export default class Body extends React.Component {
     render() {
         return (
             <div className="col-lg-10">
-                <button className="btn btn-default" type="button" data-toggle="modal" data-target="#myModal">Launch modal</button>
                 <div className="input-group">
                     <input type="text" className="form-control" id="swaggerUrl" ref="swaggerUrl" value={this.state.requestURL} onChange={this.handleChange} placeholder="Swagger URL" />
                     <div className="input-group-btn">
